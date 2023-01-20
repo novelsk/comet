@@ -1,0 +1,5 @@
+/venv/
+/.dev.env
+/db/
+/rabbit/
+/.idea/

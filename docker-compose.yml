@@ -1,0 +1,49 @@
+version: '3.6'
+
+services:
+  web:
+    container_name: comet_web
+    build: ./app
+    restart: always
+    command: bash start.sh
+    volumes:
+      - ./app:/usr/src/app/
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.dev.env
+    networks:
+      - comet_bridge
+
+  db:
+    container_name: comet_db
+    image: postgres:14.0-alpine
+    restart: always
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./.dev.env
+    networks:
+      - comet_bridge
+
+  rabbitmq:
+    image: rabbitmq:3.10-management-alpine
+    container_name: comet_rabbitmq
+    hostname: comet
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - ./.dev.env
+    volumes:
+      - ./rabbit/data/:/var/lib/rabbitmq/
+      - ./rabbit/log/:/var/log/rabbitmq
+    networks:
+      - comet_bridge
+
+
+networks:
+  comet_bridge:
+    driver: bridge
